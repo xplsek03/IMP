@@ -1,0 +1,10 @@
+fsl_clock.h:695:20:CLOCK_EnableClock	24	static
+fsl_enet.h:673:24:ENET_ReadSMIData	16	static
+fsl_enet.h:878:24:ENET_GetInterruptStatus	16	static
+fsl_enet.h:897:20:ENET_ClearInterruptStatus	16	static
+fsl_phy.c:65:10:PHY_Init	48	static
+fsl_phy.c:130:10:PHY_Write	40	static
+fsl_phy.c:161:10:PHY_Read	32	static
+fsl_phy.c:197:10:PHY_EnableLoopback	32	static
+fsl_phy.c:249:10:PHY_GetLinkStatus	32	static
+fsl_phy.c:274:10:PHY_GetLinkSpeedDuplex	40	static

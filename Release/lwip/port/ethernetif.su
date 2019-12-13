@@ -1,0 +1,4 @@
+ethernetif.c:599:14:low_level_output	32	static
+ethernetif.c:851:21:low_level_input.isra.1	1552	static
+ethernetif.c:965:6:ethernetif_input	16	static
+ethernetif.c:996:7:ethernetif_init	88	static

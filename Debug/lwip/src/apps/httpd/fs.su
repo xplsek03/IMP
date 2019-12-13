@@ -1,0 +1,5 @@
+fs.c:69:5:fs_open_custom	16	static
+fs.c:90:6:fs_close_custom	16	static
+fs.c:107:7:fs_open	24	static
+fs.c:144:1:fs_close	16	static
+fs.c:219:1:fs_bytes_left	16	static
