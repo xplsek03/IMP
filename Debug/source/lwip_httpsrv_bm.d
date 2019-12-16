@@ -21,7 +21,7 @@ source/lwip_httpsrv_bm.o source/lwip_httpsrv_bm.d: \
  ../lwip/src/include/lwip/prot/ethernet.h ../lwip/port/ethernetif.h \
  ../drivers/fsl_enet.h ../board/board.h ../board/clock_config.h \
  ../drivers/fsl_gpio.h ../board/pin_mux.h ../board/clock_config.h \
- ../lwip/src/include/lwip/apps/fs.h
+ ../lwip/src/include/lwip/apps/fs.h ../CMSIS/MK60D10.h
 
 ../lwip/src/include/lwip/opt.h:
 
@@ -112,3 +112,5 @@ source/lwip_httpsrv_bm.o source/lwip_httpsrv_bm.d: \
 ../board/clock_config.h:
 
 ../lwip/src/include/lwip/apps/fs.h:
+
+../CMSIS/MK60D10.h:

@@ -46,6 +46,16 @@
 #include "fsl_device_registers.h"
 #include "pin_mux.h"
 #include "clock_config.h"
+
+#include "lwip/apps/fs.h"
+#include "lwip/def.h"
+#include "lwip/mem.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "MK60D10.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -91,14 +101,6 @@ void SysTick_Handler(void)
 
 
 /* VLASTNI GENEROVANE SOUBORY START */
-
-#include "lwip/apps/fs.h"
-#include "lwip/def.h"
-#include "lwip/mem.h"
-
-#include <stdio.h>
-#include <string.h>
-
 
 #if LWIP_HTTPD_FS_ASYNC_READ
 u8_t
@@ -194,6 +196,7 @@ int main(void)
 
     /* zapni web server a poslouchej na ehternetu */
     httpd_init();
+    cgi_ex_init();
 
     /* DEBUG */
     PRINTF("\r\n************************************************\r\n");

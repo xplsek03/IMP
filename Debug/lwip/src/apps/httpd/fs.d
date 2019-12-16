@@ -12,7 +12,9 @@ lwip/src/apps/httpd/fs.o lwip/src/apps/httpd/fs.d: \
  ../lwip/src/include/lwip/apps/fs.h \
  ../lwip/src/include/lwip/apps/httpd_opts.h \
  ../lwip/src/include/lwip/err.h ../lwip/src/apps/httpd/fsdata.h \
- ../lwip/src/apps/httpd/include/fsdata.c ../lwip/src/apps/httpd/fsdata.h
+ ../lwip/src/apps/httpd/include/fsdata.c ../lwip/src/apps/httpd/fsdata.h \
+ ../lwip/src/include/lwip/apps/httpd.h ../lwip/src/include/lwip/pbuf.h \
+ ../lwip/src/include/lwip/mem.h
 
 ../lwip/src/include/lwip/apps/httpd_opts.h:
 
@@ -67,3 +69,9 @@ lwip/src/apps/httpd/fs.o lwip/src/apps/httpd/fs.d: \
 ../lwip/src/apps/httpd/include/fsdata.c:
 
 ../lwip/src/apps/httpd/fsdata.h:
+
+../lwip/src/include/lwip/apps/httpd.h:
+
+../lwip/src/include/lwip/pbuf.h:
+
+../lwip/src/include/lwip/mem.h:

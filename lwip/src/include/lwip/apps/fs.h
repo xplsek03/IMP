@@ -29,6 +29,10 @@
  * Author: Adam Dunkels <adam@sics.se>
  *
  */
+
+/* funkce pro ovladani souboru s cgi GET */
+void cgi_ex_init(void);
+
 #ifndef LWIP_HDR_APPS_FS_H
 #define LWIP_HDR_APPS_FS_H
 

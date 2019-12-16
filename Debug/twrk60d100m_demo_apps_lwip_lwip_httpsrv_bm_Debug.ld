@@ -6,7 +6,7 @@
  * Generated linker script file for MK60DN512xxx10
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.23
- * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 13.12.2019 15:29:14
+ * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 16.12.2019 10:54:33
  */
 
 INCLUDE "twrk60d100m_demo_apps_lwip_lwip_httpsrv_bm_Debug_library.ld"

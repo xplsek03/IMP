@@ -33,44 +33,124 @@
 #include "lwip/apps/httpd_opts.h"
 #include "lwip/def.h"
 #include "lwip/apps/fs.h"
-
 #include <string.h>
-
 #include "fsdata.h"
 #include "fsdata.c"
 
-/*-----------------------------------------------------------------------------------*/
+/* CGI GET START */
 
-#if LWIP_HTTPD_CUSTOM_FILES
+#include "lwip/apps/httpd.h"
+#include "lwip/def.h"
+#include "lwip/mem.h"
+#include <stdio.h>
 
-const char generated_html[] =
-"<html>\n"
-"<head><title>lwIP - A Lightweight TCP/IP Stack</title></head>\n"
-" <body bgcolor=\"white\" text=\"black\">\n"
-"  <table width=\"100%\">\n"
-"   <tr valign=\"top\">\n"
-"    <td width=\"80\">\n"
-"     <a href=\"http://www.sics.se/\"><img src=\"/img/sics.gif\"\n"
-"      border=\"0\" alt=\"SICS logo\" title=\"SICS logo\"></a>\n"
-"    </td>\n"
-"    <td width=\"500\">\n"
-"     <h1>lwIP - A Lightweight TCP/IP Stack</h1>\n"
-"     <h2>Generated page</h2>\n"
-"     <p>This page might be generated in-memory at runtime</p>\n"
-"    </td>\n"
-"    <td>\n"
-"    &nbsp;\n"
-"    </td>\n"
-"   </tr>\n"
-"  </table>\n"
-" </body>\n"
-"</html>";
+/* je tu aby cgi handlery vedely co je callback funkce */
+static const char *cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]);
+
+/* defaultni sablona index.html, ktera se bude postupne prepisovat, ale vzdycky zustane ulozena posledni verze */
+
+const char generated_html[] = "";
+
+/* konkretni handlery */
+static const tCGI cgi_handlers[] = {
+  {
+    "/index.html",
+    cgi_handler_basic
+  },
+  {
+	"/",
+	cgi_handler_basic
+  }
+};
+
+/* callback zpracovani get requestu */
+static const char * cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]) {
+
+  LWIP_ASSERT("check index", iIndex < LWIP_ARRAYSIZE(cgi_handlers));
+
+  if (iNumParams == 1) {
+    if (!strcmp(pcParam[0], "led")) {
+
+      if (!strcmp(pcValue[0], "l1")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "l2")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "l3")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "l4")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "l5")) {
+    	  return "valid";
+      }
+      else return "/404.html";
+    }
+
+    else if (!strcmp(pcParam[0], "arrow")) {
+
+      if (!strcmp(pcValue[0], "upon")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "upout")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "downon")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "downout")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "lefton")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "leftout")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "righton")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "rightout")) {
+    	  return "valid";
+      }
+      else return "/404.html";
+    }
+
+    else if (!strcmp(pcParam[0], "bzz")) {
+
+      if (!strcmp(pcValue[0], "on")) {
+    	  return "valid";
+      }
+      else if (!strcmp(pcValue[0], "off")) {
+    	  return "valid";
+      }
+      else return "/404.html";
+    }
+
+  }
+  else if(!iNumParams) {
+	  // zjisti stav co tam je systemove a nastav ho
+	  return "/index.html";
+  }
+
+  return "/404.html";
+}
+
+/* nastav handler na httpd */
+void cgi_ex_init(void) {
+  http_set_cgi_handlers(cgi_handlers, LWIP_ARRAYSIZE(cgi_handlers));
+}
+
+/* GET END */
 
 int fs_open_custom(struct fs_file *file, const char *name) {
 
-  /* this example only provides one file */
-  if (!strcmp(name, "/index.html")) {
+/* pokud se ma zobrazit defaultni index */
+  if (!strcmp(name, "valid")) {
     /* initialize fs_file correctly */
+
     memset(file, 0, sizeof(struct fs_file));
     file->pextension = mem_malloc(sizeof(generated_html));
     if (file->pextension != NULL) {
@@ -101,7 +181,6 @@ int fs_read_async_custom(struct fs_file *file, char *buffer, int count, fs_wait_
 #else /* LWIP_HTTPD_FS_ASYNC_READ */
 int fs_read_custom(struct fs_file *file, char *buffer, int count);
 #endif /* LWIP_HTTPD_FS_ASYNC_READ */
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
 
 /*-----------------------------------------------------------------------------------*/
 err_t fs_open(struct fs_file *file, const char *name) {
