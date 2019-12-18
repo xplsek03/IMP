@@ -6,7 +6,7 @@
  * Generated linker script file for MK60DN512xxx10
  * Created from memory.ldt by FMCreateLinkMemory
  * Using Freemarker v2.3.23
- * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 16.12.2019 10:54:33
+ * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 18.12.2019 19:44:18
  */
 
 MEMORY

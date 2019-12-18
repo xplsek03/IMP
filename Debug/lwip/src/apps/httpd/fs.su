@@ -1,7 +1,8 @@
-fs.c:67:21:cgi_handler_basic	24	static
-fs.c:142:6:cgi_ex_init	8	static
-fs.c:148:5:fs_open_custom	16	static
-fs.c:170:6:fs_close_custom	16	static
-fs.c:186:7:fs_open	24	static
-fs.c:220:6:fs_close	16	static
-fs.c:295:1:fs_bytes_left	16	static
+fs.c:75:14:cgi_server_update	32	static
+fs.c:124:14:cgi_handler_basic	24	static
+fs.c:191:6:cgi_ex_init	8	static
+fs.c:195:5:fs_open_custom	24	static
+fs.c:215:6:fs_close_custom	16	static
+fs.c:223:7:fs_open	24	static
+fs.c:250:6:fs_close	16	static
+fs.c:258:5:fs_bytes_left	16	static

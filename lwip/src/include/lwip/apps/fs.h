@@ -30,9 +30,6 @@
  *
  */
 
-/* funkce pro ovladani souboru s cgi GET */
-void cgi_ex_init(void);
-
 #ifndef LWIP_HDR_APPS_FS_H
 #define LWIP_HDR_APPS_FS_H
 
@@ -56,38 +53,39 @@ struct fs_file {
   void *pextension;
 
   u8_t flags;
-#if LWIP_HTTPD_CUSTOM_FILES
   u8_t is_custom_file;
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
-#if LWIP_HTTPD_FILE_STATE
-  void *state;
-#endif /* LWIP_HTTPD_FILE_STATE */
 };
-
-#if LWIP_HTTPD_FS_ASYNC_READ
-typedef void (*fs_wait_cb)(void *arg);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
 
 err_t fs_open(struct fs_file *file, const char *name);
 void fs_close(struct fs_file *file);
-#if LWIP_HTTPD_DYNAMIC_FILE_READ
-#if LWIP_HTTPD_FS_ASYNC_READ
-int fs_read_async(struct fs_file *file, char *buffer, int count, fs_wait_cb callback_fn, void *callback_arg);
-#else /* LWIP_HTTPD_FS_ASYNC_READ */
-int fs_read(struct fs_file *file, char *buffer, int count);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-#endif /* LWIP_HTTPD_DYNAMIC_FILE_READ */
-#if LWIP_HTTPD_FS_ASYNC_READ
-int fs_is_file_ready(struct fs_file *file, fs_wait_cb callback_fn, void *callback_arg);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
 int fs_bytes_left(struct fs_file *file);
 
-#if LWIP_HTTPD_FILE_STATE
-/** This user-defined function is called when a file is opened. */
-void *fs_state_init(struct fs_file *file, const char *name);
-/** This user-defined function is called when a file is closed. */
-void fs_state_free(struct fs_file *file, void *state);
-#endif /* #if LWIP_HTTPD_FILE_STATE */
+const char *cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]);
+const char *cgi_server_update(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]);
+
+// PINY
+#define GPIO_PIN_MASK 0x1Fu
+#define GPIO_PIN(x) (((1)<<(x & GPIO_PIN_MASK)))
+#define LED_D9  0x20      	// Port B, bit 5
+#define LED_D10 0x10      	// Port B, bit 4
+#define LED_D11 0x8       	// Port B, bit 3
+#define LED_D12 0x4       	// Port B, bit 2
+
+#define BTN_SW2 0x400     	// Port E, bit 10 Right
+#define BTN_SW3 0x1000    	// Port E, bit 12 Down
+#define BTN_SW4 0x8000000 	// Port E, bit 27 Left
+#define BTN_SW5 0x4000000 	// Port E, bit 26 Up
+#define BTN_SW6 0x800		// PORT E, bit 11 preruseni pollingu
+
+extern int action;			// doslo k nejake akci
+extern int up_pressed; 		// tlacitko je zmacknute
+extern int down_pressed; 	// tlacitko je zmacknute
+extern int left_pressed; 	// tlacitko je zmacknute
+extern int right_pressed; 	// tlacitko je zmacknute
+
+/* funkce pro ovladani souboru s cgi GET */
+void cgi_ex_init(void);
+
 
 #ifdef __cplusplus
 }

@@ -1763,9 +1763,17 @@
 #define LWIP_TCP_KEEPALIVE              1
 #endif
 
-#define TCP_KEEPIDLE					1
-#define TCP_KEEPINTVL					100
-#define TCP_KEEPCNT 					100
+#ifndef  TCP_KEEPIDLE_DEFAULT
+#define  TCP_KEEPIDLE_DEFAULT     7200000UL /* Default KEEPALIVE timer in milliseconds */
+#endif
+
+#ifndef  TCP_KEEPINTVL_DEFAULT
+#define  TCP_KEEPINTVL_DEFAULT    75000UL   /* Default Time between KEEPALIVE probes in milliseconds */
+#endif
+
+#ifndef  TCP_KEEPCNT_DEFAULT
+#define  TCP_KEEPCNT_DEFAULT      9U        /* Default Counter for KEEPALIVE probes */
+#endif
 
 /**
  * LWIP_SO_SNDTIMEO==1: Enable send timeout for sockets/netconns and

@@ -6,7 +6,7 @@
  * Generated linker script file for MK60DN512xxx10
  * Created from library.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.23
- * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 13.12.2019 14:34:33
+ * MCUXpresso IDE v11.0.1 [Build 2563] [2019-09-01] on 16.12.2019 19:15:37
  */
 
 GROUP (

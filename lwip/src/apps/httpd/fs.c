@@ -44,98 +44,147 @@
 #include "lwip/mem.h"
 #include <stdio.h>
 
-/* je tu aby cgi handlery vedely co je callback funkce */
-static const char *cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]);
+/* zatim nedoslo k akci */
+int action = 0;
 
-/* defaultni sablona index.html, ktera se bude postupne prepisovat, ale vzdycky zustane ulozena posledni verze */
+int kill = 0; // objevil se jiny  request, zastav polling
 
-const char generated_html[] = "";
+// jednotlve sipky - zmacknute
+int up_pressed = 0;
+int down_pressed = 0;
+int left_pressed = 0;
+int right_pressed = 0;
 
 /* konkretni handlery */
 static const tCGI cgi_handlers[] = {
+  {
+   "/update.html",
+   cgi_server_update
+  },
   {
     "/index.html",
     cgi_handler_basic
   },
   {
-	"/",
-	cgi_handler_basic
+    "/",
+    cgi_handler_basic
   }
 };
 
-/* callback zpracovani get requestu */
-static const char * cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]) {
+/* klient poll a server posle jen kdyz ma co poslat */
+const char * cgi_server_update(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]) {
+	LWIP_ASSERT("check index", iIndex < LWIP_ARRAYSIZE(cgi_handlers));
+
+	while(1) {
+
+		for(int i=0; i < 500; i++); // DELAY
+
+		if(!down_pressed && !(GPIOE->PDIR & BTN_SW3)) {
+			down_pressed = 1;
+			return "down";
+		}
+		else if(down_pressed && (GPIOE->PDIR & BTN_SW3)) {
+			down_pressed = 0;
+			return "down";
+		}
+		if (!up_pressed && !(GPIOE->PDIR & BTN_SW5)) {
+			up_pressed = 1;
+			return "up";
+		}
+		else if(up_pressed && (GPIOE->PDIR & BTN_SW5)) {
+			up_pressed = 0;
+			return "up";
+		}
+		else if(!right_pressed && !(GPIOE->PDIR & BTN_SW2)) {
+			right_pressed = 1;
+			return "right";
+		}
+		else if(right_pressed && (GPIOE->PDIR & BTN_SW2)) {
+			right_pressed = 0;
+			return "right";
+		}
+		else if(!left_pressed && !(GPIOE->PDIR & BTN_SW4)) {
+			left_pressed = 1;
+			return "left";
+		}
+		else if(left_pressed && (GPIOE->PDIR & BTN_SW4)) {
+			left_pressed = 0;
+			return "left";
+		}
+
+		// prerus polling a posli preruseni ke klientovi
+		else if(!(GPIOE->PDIR & BTN_SW6)) {
+			return "pollkill";
+		}
+	}
+	return "/index.html";
+}
+
+/* callback zpracovani klientskeho get requestu */
+const char * cgi_handler_basic(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]) {
 
   LWIP_ASSERT("check index", iIndex < LWIP_ARRAYSIZE(cgi_handlers));
 
   if (iNumParams == 1) {
-    if (!strcmp(pcParam[0], "led")) {
 
-      if (!strcmp(pcValue[0], "l1")) {
-    	  return "valid";
-      }
-      else if (!strcmp(pcValue[0], "l2")) {
-    	  return "valid";
-      }
-      else if (!strcmp(pcValue[0], "l3")) {
-    	  return "valid";
+    if (!strcmp(pcParam[0], "led")) {
+	  if(!strcmp(pcValue[0], "l1")) {
+		  GPIOB->PDOR ^= LED_D9;
+		  return "valid";
+	  }
+	  else if (!strcmp(pcValue[0], "l2")) {
+		  GPIOB->PDOR ^= LED_D10;
+		  return "valid";
+	  }
+	  else if (!strcmp(pcValue[0], "l3")) {
+		  GPIOB->PDOR ^= LED_D11;
+		  return "valid";
       }
       else if (!strcmp(pcValue[0], "l4")) {
+    	  GPIOB->PDOR ^= LED_D12;
     	  return "valid";
       }
-      else if (!strcmp(pcValue[0], "l5")) {
-    	  return "valid";
-      }
-      else return "/404.html";
+      else return "/index.html";
     }
 
-    else if (!strcmp(pcParam[0], "arrow")) {
+    else if(!strcmp(pcParam[0], "arrow")) {
 
-      if (!strcmp(pcValue[0], "upon")) {
-    	  return "valid";
+      if (!strcmp(pcValue[0], "upon")) { // dal na neho prst a zaroven neni zmacknute
+    	  GPIOE->PDOR |= BTN_SW5; // zmen stav na zmacknuto
+    	  return "valid"; // DEBUG: index.html
       }
-      else if (!strcmp(pcValue[0], "upout")) {
+      else if(!strcmp(pcValue[0], "upout")) { // sundal z neho prst
+    	  GPIOE->PDOR &= ~(BTN_SW5);
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "downon")) {
+    	  GPIOE->PDOR |= BTN_SW3;
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "downout")) {
+    	  GPIOE->PDOR &= ~(BTN_SW3);
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "lefton")) {
+    	  GPIOE->PDOR |= BTN_SW4;
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "leftout")) {
+    	  GPIOE->PDOR &= ~(BTN_SW4);
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "righton")) {
+    	  GPIOE->PDOR |= BTN_SW2;
     	  return "valid";
       }
       else if (!strcmp(pcValue[0], "rightout")) {
+    	  GPIOE->PDOR &= ~(BTN_SW2);
     	  return "valid";
       }
-      else return "/404.html";
-    }
-
-    else if (!strcmp(pcParam[0], "bzz")) {
-
-      if (!strcmp(pcValue[0], "on")) {
-    	  return "valid";
-      }
-      else if (!strcmp(pcValue[0], "off")) {
-    	  return "valid";
-      }
-      else return "/404.html";
     }
 
   }
-  else if(!iNumParams) {
-	  // zjisti stav co tam je systemove a nastav ho
-	  return "/index.html";
-  }
-
-  return "/404.html";
+  return "/index.html";
 }
 
 /* nastav handler na httpd */
@@ -143,23 +192,19 @@ void cgi_ex_init(void) {
   http_set_cgi_handlers(cgi_handlers, LWIP_ARRAYSIZE(cgi_handlers));
 }
 
-/* GET END */
-
 int fs_open_custom(struct fs_file *file, const char *name) {
 
 /* pokud se ma zobrazit defaultni index */
-  if (!strcmp(name, "valid")) {
+  if (!strcmp(name, "right") || !strcmp(name, "left") || !strcmp(name, "up") || !strcmp(name, "down") || !strcmp(name, "valid") || !strcmp(name, "pollkill")) {
     /* initialize fs_file correctly */
 
     memset(file, 0, sizeof(struct fs_file));
-    file->pextension = mem_malloc(sizeof(generated_html));
+    file->pextension = mem_malloc(strlen(name));
     if (file->pextension != NULL) {
-      /* instead of doing memcpy, you would generate e.g. a JSON here */
-      memcpy(file->pextension, generated_html, sizeof(generated_html));
+      memcpy(file->pextension, name, strlen(name));
       file->data = (const char *)file->pextension;
-      file->len = sizeof(generated_html) - 1; /* don't send the trailing 0 */
+      file->len = strlen(name);
       file->index = file->len;
-      /* allow persisteng connections */
       file->flags = FS_FILE_FLAGS_HEADER_PERSISTENT;
       return 1;
     }
@@ -174,29 +219,20 @@ void fs_close_custom(struct fs_file *file) {
   }
 }
 
-#if LWIP_HTTPD_FS_ASYNC_READ
-u8_t fs_canread_custom(struct fs_file *file);
-u8_t fs_wait_read_custom(struct fs_file *file, fs_wait_cb callback_fn, void *callback_arg);
-int fs_read_async_custom(struct fs_file *file, char *buffer, int count, fs_wait_cb callback_fn, void *callback_arg);
-#else /* LWIP_HTTPD_FS_ASYNC_READ */
-int fs_read_custom(struct fs_file *file, char *buffer, int count);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
 
-/*-----------------------------------------------------------------------------------*/
 err_t fs_open(struct fs_file *file, const char *name) {
+
   const struct fsdata_file *f;
 
   if ((file == NULL) || (name == NULL)) {
      return ERR_ARG;
   }
 
-#if LWIP_HTTPD_CUSTOM_FILES
   if (fs_open_custom(file, name)) {
     file->is_custom_file = 1;
     return ERR_OK;
   }
   file->is_custom_file = 0;
-#endif
 
   for (f = FS_ROOT; f != NULL; f = f->next) {
     if (!strcmp(name, (const char *)f->name)) {
@@ -205,94 +241,21 @@ err_t fs_open(struct fs_file *file, const char *name) {
       file->index = f->len;
       file->pextension = NULL;
       file->flags = f->flags;
-#if LWIP_HTTPD_FILE_STATE
-      file->state = fs_state_init(file, name);
-#endif
       return ERR_OK;
     }
   }
-
-  /* file not found */
   return ERR_VAL;
 }
 
-/*-----------------------------------------------------------------------------------*/
 void fs_close(struct fs_file *file)
 {
-#if LWIP_HTTPD_CUSTOM_FILES
   if (file->is_custom_file) {
     fs_close_custom(file);
   }
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
-#if LWIP_HTTPD_FILE_STATE
-  fs_state_free(file, file->state);
-#endif /* #if LWIP_HTTPD_FILE_STATE */
   LWIP_UNUSED_ARG(file);
 }
-/*-----------------------------------------------------------------------------------*/
-#if LWIP_HTTPD_DYNAMIC_FILE_READ
-#if LWIP_HTTPD_FS_ASYNC_READ
-int
-fs_read_async(struct fs_file *file, char *buffer, int count, fs_wait_cb callback_fn, void *callback_arg)
-#else /* LWIP_HTTPD_FS_ASYNC_READ */
-int
-fs_read(struct fs_file *file, char *buffer, int count)
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-{
-  int read;
-  if(file->index == file->len) {
-    return FS_READ_EOF;
-  }
-#if LWIP_HTTPD_FS_ASYNC_READ
-  LWIP_UNUSED_ARG(callback_fn);
-  LWIP_UNUSED_ARG(callback_arg);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-#if LWIP_HTTPD_CUSTOM_FILES
-  if (file->is_custom_file) {
-#if LWIP_HTTPD_FS_ASYNC_READ
-    return fs_read_async_custom(file, buffer, count, callback_fn, callback_arg);
-#else /* LWIP_HTTPD_FS_ASYNC_READ */
-    return fs_read_custom(file, buffer, count);
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-  }
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
 
-  read = file->len - file->index;
-  if(read > count) {
-    read = count;
-  }
-
-  MEMCPY(buffer, (file->data + file->index), read);
-  file->index += read;
-
-  return(read);
-}
-#endif /* LWIP_HTTPD_DYNAMIC_FILE_READ */
-/*-----------------------------------------------------------------------------------*/
-#if LWIP_HTTPD_FS_ASYNC_READ
-int
-fs_is_file_ready(struct fs_file *file, fs_wait_cb callback_fn, void *callback_arg)
-{
-  if (file != NULL) {
-#if LWIP_HTTPD_FS_ASYNC_READ
-#if LWIP_HTTPD_CUSTOM_FILES
-    if (!fs_canread_custom(file)) {
-      if (fs_wait_read_custom(file, callback_fn, callback_arg)) {
-        return 0;
-      }
-    }
-#else /* LWIP_HTTPD_CUSTOM_FILES */
-    LWIP_UNUSED_ARG(callback_fn);
-    LWIP_UNUSED_ARG(callback_arg);
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-  }
-  return 1;
-}
-#endif /* LWIP_HTTPD_FS_ASYNC_READ */
-/*-----------------------------------------------------------------------------------*/
-int
-fs_bytes_left(struct fs_file *file)
+int fs_bytes_left(struct fs_file *file)
 {
   return file->len - file->index;
 }
