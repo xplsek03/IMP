@@ -1,4 +1,0 @@
-lwip_httpsrv_bm.c:83:6:SysTick_Handler	0	static
-lwip_httpsrv_bm.c:88:6:MCUInit	0	static
-lwip_httpsrv_bm.c:94:6:PortsInit	0	static
-lwip_httpsrv_bm.c:117:5:main	88	static
